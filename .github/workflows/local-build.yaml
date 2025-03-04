@@ -1,4 +1,4 @@
-name: CI for docker image built from local source code
+name: local-build
 
 on:
   workflow_dispatch:
