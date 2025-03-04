@@ -36,11 +36,11 @@ RUN set -x \
         git  \
         sudo \
         libyaml-dev \
-    && ls -al \
-    && make deps \
-    && mkdir -p ${ENV_INST_LUADIR} \
-    && cp -r deps ${ENV_INST_LUADIR} \
-    && make install
+    && ls -al
+RUN set -x && make deps
+RUN mkdir -p ${ENV_INST_LUADIR} \
+    && cp -r deps ${ENV_INST_LUADIR}
+RUN make install
 
 FROM debian:bullseye-slim
 

@@ -1,0 +1,52 @@
+name: local-build
+
+on:
+  workflow_dispatch:
+
+
+env:
+  APISIX_IMAGE_NAME: "apisix-local"
+  APISIX_IMAGE_TAG: "3.11"
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - debian
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Checkout APISIX code
+        run: |
+          git clone -b cnhtc-apisix https://github.com/arbor-95/local-apisix.git
+
+      - name: Build image
+        run: |
+          cd debian-dev && \
+          mv ../local-apisix ./ && \
+          docker build -t ${APISIX_IMAGE_NAME}:${APISIX_IMAGE_TAG} \
+          --build-arg CODE_PATH=./local-apisix \
+          --build-arg ENTRYPOINT_PATH=./docker-entrypoint.sh \
+          --build-arg INSTALL_BROTLI=./install-brotli.sh \
+          -f ./Dockerfile.local .
+
+      - name: Save Images Local
+        run: |
+          docker save ${APISIX_IMAGE_NAME}:${APISIX_IMAGE_TAG} > ${APISIX_IMAGE_NAME}.tar
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{env.APISIX_IMAGE_NAME}}.tar
+          path: ${{env.APISIX_IMAGE_NAME}}.tar
+          retention-days: 1
+
+      - name: Clean up
+        run: |
+          rm ${APISIX_IMAGE_NAME}.tar
