@@ -30,6 +30,10 @@ COPY ${CODE_PATH} /apisix
 WORKDIR /apisix
 
 RUN set -x \
+    && printf 'deb http://snapshot.debian.org/archive/debian/20260825T000000Z bullseye main\ndeb http://snapshot.debian.org/archive/debian-security/20260825T000000Z bullseye-security main\n' > /etc/apt/sources.list \
+    && printf 'Acquire::Check-Valid-Until "false";\n' > /etc/apt/apt.conf.d/99snapshot \
+    && rm -f /etc/apt/sources.list.d/*.list \
+    && apt-get update --fix-missing \
     && apt-get -y update --fix-missing \
     && apt-get install -y \
         make \
@@ -53,6 +57,15 @@ COPY --from=build /usr/local/apisix /usr/local/apisix
 COPY --from=build /usr/local/openresty /usr/local/openresty
 COPY --from=build /usr/bin/apisix /usr/bin/apisix
 COPY --from=build /usr/lib/x86_64-linux-gnu/libyaml* /usr/local/lib/
+
+# 运行阶段同样使用 snapshot 源，并显式安装 wget
+RUN set -x \
+    && printf 'deb http://snapshot.debian.org/archive/debian/20260825T000000Z bullseye main\ndeb http://snapshot.debian.org/archive/debian-security/20260825T000000Z bullseye-security main\n' > /etc/apt/sources.list \
+    && printf 'Acquire::Check-Valid-Until "false";\n' > /etc/apt/apt.conf.d/99snapshot \
+    && rm -f /etc/apt/sources.list.d/*.list \
+    && apt-get update --fix-missing \
+    && apt-get install -y wget ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY ${INSTALL_BROTLI} /install-brotli.sh
 RUN chmod +x /install-brotli.sh \  
