@@ -1,0 +1,48 @@
+name: CI for docker image built from local source code
+
+on:
+  workflow_dispatch:
+
+
+env:
+  APISIX_IMAGE_NAME: "apisix-local"
+  APISIX_IMAGE_TAG: "3.11"
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - debian
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Checkout APISIX code
+        run: |
+          git clone -b cnhtc-apisix https://github.com/arbor-95/local-apisix.git
+
+      - name: Build image
+        run: |
+          cd debian-dev && \
+          mv ../local-apisix ./ && \
+          docker build -t ${APISIX_IMAGE_NAME}:${APISIX_IMAGE_TAG} --build-arg CODE_PATH=./local-apisix -f ./Dockerfile .
+
+      - name: Save Images Local
+        run: |
+          docker save ${APISIX_IMAGE_NAME}:${APISIX_IMAGE_TAG} > ${APISIX_IMAGE_NAME}.tar
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{env.APISIX_IMAGE_NAME}}.tar
+          path: ${{env.APISIX_IMAGE_NAME}}.tar
+          retention-days: 1
+
+      - name: Clean up
+        run: |
+          rm ${APISIX_IMAGE_NAME}.tar
