@@ -37,7 +37,7 @@ RUN set -x \
         sudo \
         libyaml-dev \
     && ls -al
-RUN make deps
+RUN set -x && make deps
 RUN mkdir -p ${ENV_INST_LUADIR} \
     && cp -r deps ${ENV_INST_LUADIR}
 RUN make install
