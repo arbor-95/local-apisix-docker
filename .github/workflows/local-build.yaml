@@ -28,9 +28,7 @@ jobs:
 
       - name: Build image
         run: |
-          cd debian-dev && \
-          mv ../local-apisix ./ && \
-          docker build -t ${APISIX_IMAGE_NAME}:${APISIX_IMAGE_TAG} --build-arg CODE_PATH=./local-apisix -f ./Dockerfile .
+          docker build -t ${APISIX_IMAGE_NAME}:${APISIX_IMAGE_TAG} -f ./redhat/Dockerfile redhat
 
       - name: Save Images Local
         run: |
