@@ -32,8 +32,8 @@ jobs:
           mv ../local-apisix ./ && \
           docker build -t ${APISIX_IMAGE_NAME}:${APISIX_IMAGE_TAG} \
           --build-arg CODE_PATH=./local-apisix \
-          --build-arg ENTRYPOINT_PATH=debian-dev/docker-entrypoint.sh \
-          --build-arg INSTALL_BROTLI=debian-dev/install-brotli.sh \
+          --build-arg ENTRYPOINT_PATH=./docker-entrypoint.sh \
+          --build-arg INSTALL_BROTLI=./install-brotli.sh \
           -f ./Dockerfile.local .
 
       - name: Save Images Local
