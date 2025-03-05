@@ -28,7 +28,13 @@ jobs:
 
       - name: Build image
         run: |
-          docker build -t ${APISIX_IMAGE_NAME}:${APISIX_IMAGE_TAG} -f ./redhat/Dockerfile redhat
+          cd debian-dev && \
+          mv ../local-apisix ./ && \
+          docker build -t ${APISIX_IMAGE_NAME}:${APISIX_IMAGE_TAG} \
+          --build-arg CODE_PATH=./local-apisix \
+          --build-arg ENTRYPOINT_PATH=debian-dev/docker-entrypoint.sh \
+          --build-arg INSTALL_BROTLI=debian-dev/install-brotli.sh \
+          -f ./Dockerfile.local .
 
       - name: Save Images Local
         run: |
