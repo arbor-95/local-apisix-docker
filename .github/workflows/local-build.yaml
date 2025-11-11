@@ -6,7 +6,7 @@ on:
 
 env:
   APISIX_IMAGE_NAME: "apisix-local"
-  APISIX_IMAGE_TAG: "3.11"
+  APISIX_IMAGE_TAG: "3.14"
 
 jobs:
 
@@ -24,7 +24,7 @@ jobs:
 
       - name: Checkout APISIX code
         run: |
-          git clone -b cnhtc-apisix https://github.com/arbor-95/local-apisix.git
+          git clone -b cnhtc-apisix-3.14 https://github.com/arbor-95/local-apisix.git
 
       - name: Build image
         run: |
