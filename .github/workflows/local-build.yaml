@@ -6,7 +6,7 @@ on:
 
 env:
   APISIX_IMAGE_NAME: "apisix-local"
-  APISIX_IMAGE_TAG: "3.14"
+  APISIX_IMAGE_TAG: "3.17"
 
 jobs:
 
